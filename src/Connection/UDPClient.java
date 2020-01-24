@@ -7,4 +7,8 @@ public class UDPClient {
     private DatagramSocket datagram;
     private InetAddress serverAddress;
     private int port;
+
+    public void connectToUDPServer() {
+
+    }
 }
