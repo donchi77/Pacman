@@ -1,0 +1,26 @@
+Fasi:
+	1 enter giocare
+	2 attesa giocatori con lista connessi
+	3 connessi tutti satbilisci i ruoli
+	4 spawn fissi dei giocatori 
+	5 gioco
+	6 fine gioco con richiesta MM o ragequit	
+
+pacman 
+	deve prendere i tutti puntini per vincere o mangare tutti i fantasmini (con punti grossi)
+	punti grossi permettono di mangiare i fantasmi per 10 secondi
+	3 vite
+	15% piu veloce
+
+fantasmini
+	mangiare pacman
+
+server
+	inoltare i dati
+	scegliere i ruoli random
+	condizioni di vittoria
+	
+
+
+
+	
