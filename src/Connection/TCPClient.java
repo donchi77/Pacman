@@ -28,7 +28,7 @@ public class TCPClient {
         }
     }
 
-    public void discconectToServer() {
+    public void disconnectToServer() {
         try {
             toServer.close();
             fromServer.close();
