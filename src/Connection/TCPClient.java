@@ -1,18 +1,18 @@
 package Connection;
 
 import Players.Player;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.Socket;
 
 public class TCPClient {
     private Player himself;
 
     private Socket clientSocket;
-    private PrintWriter toServer;
-    private BufferedReader fromServer;
+    private PrintWriter stringToServer;
+    private BufferedReader stringFromServer;
+    private ObjectOutputStream objectToServer;
+    private ObjectInputStream objectFromServer;
 
     public TCPClient(String username) {
         himself = new Player(username);
@@ -21,8 +21,12 @@ public class TCPClient {
     public void connectToServer(String IPv4Server, int port) {
         try {
             clientSocket = new Socket(IPv4Server, port);
-            toServer = new PrintWriter(clientSocket.getOutputStream(), true);
-            fromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            stringToServer = new PrintWriter(clientSocket.getOutputStream(), true);
+            stringFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            objectToServer = new ObjectOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
+            objectFromServer = new ObjectInputStream((new BufferedInputStream(clientSocket.getInputStream())));
+
+            objectToServer.writeObject(himself);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,8 +34,10 @@ public class TCPClient {
 
     public void disconnectToServer() {
         try {
-            toServer.close();
-            fromServer.close();
+            stringToServer.close();
+            stringFromServer.close();
+            objectToServer.close();
+            objectFromServer.close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
