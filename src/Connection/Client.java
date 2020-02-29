@@ -5,7 +5,7 @@ import Players.Player;
 import java.io.*;
 import java.net.Socket;
 
-public class TCPClient {
+public class Client {
     private Player himself;
 
     private Socket clientSocket;
@@ -14,7 +14,7 @@ public class TCPClient {
     private ObjectOutputStream objectToServer;
     private ObjectInputStream objectFromServer;
 
-    public TCPClient(String username) {
+    public Client(String username) {
         himself = new Player(username);
     }
 

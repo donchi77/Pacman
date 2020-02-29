@@ -1,6 +1,5 @@
 package Connection;
 
-import Players.Player;
 import Players.Players;
 
 import java.io.BufferedInputStream;
@@ -9,14 +8,14 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class TCPServer {
+public class Server {
     //Variabili globali
     Socket[] socketD = new Socket[4];
     //Player player;
     Players players;
     ObjectInputStream objInput;
 
-    public TCPServer(){
+    public Server(){
     }
 
     public static void main(String[] args) {
@@ -29,7 +28,7 @@ public class TCPServer {
             System.out.println("Creazione della socket...");
 
             ServerSocket socketC = new ServerSocket(8080);
-            TCPServer server = new TCPServer();
+            Server server = new Server();
             server.acc(socketC);
             server.game();
         } catch(Exception ex) {

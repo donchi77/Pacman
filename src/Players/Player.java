@@ -3,7 +3,10 @@ package Players;
 public class Player implements Runnable {
     private String username;
     private boolean isPacMan;
+    private int score;
+
     private String pathImages;
+
     private int posX;
     private int posY;
 
@@ -42,4 +45,6 @@ public class Player implements Runnable {
     public void run() {
 
     }
+
+
 }
