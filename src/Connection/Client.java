@@ -1,11 +1,14 @@
 package Connection;
 
+import Layout.Game;
 import Players.Player;
 
+import javax.swing.*;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
 
-public class Client {
+public class Client extends JPanel {
     private Player himself;
 
     private Socket clientSocket;
@@ -14,11 +17,11 @@ public class Client {
     private ObjectOutputStream objectToServer;
     private ObjectInputStream objectFromServer;
 
-    public Client(String username) {
-        himself = new Player(username);
-    }
+     public void setHimself(String username) {
+         this.himself = new Player(username);
+     }
 
-    public void connectToServer(String IPv4Server, int port) {
+    public void connectToServer(InetAddress IPv4Server, int port) {
         try {
             clientSocket = new Socket(IPv4Server, port);
             stringToServer = new PrintWriter(clientSocket.getOutputStream(), true);
