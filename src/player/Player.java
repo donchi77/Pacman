@@ -1,4 +1,4 @@
-package Players;
+package player;
 
 public class Player implements Runnable {
     private String username;

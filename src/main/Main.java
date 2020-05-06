@@ -1,6 +1,6 @@
-package Main;
+package main;
 
-import Layout.Game;
+import layout.Game;
 
 import java.awt.*;
 

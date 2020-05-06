@@ -1,23 +1,21 @@
-package Layout;
+package layout;
 
-import Connection.Client;
-import Constants.GameCostants;
+import connection.Client;
+import constants.GameConstants;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Game extends JFrame {
-    private MapDesign map;
-
     public Game() {
         initUI();
     }
 
     public void initUI() {
-        this.add(new Client());
+        this.add(new Client("red"));
         this.setTitle("PacMan - Multiplayer");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(GameCostants.SCREEN_WIDTH, GameCostants.SCREEN_HEIGHT));
+        this.setSize(new Dimension(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT));
         this.setLocationRelativeTo(null);
     }
 

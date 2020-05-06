@@ -1,4 +1,4 @@
-package Layout;
+package layout;
 
 public class MapDesign {
 

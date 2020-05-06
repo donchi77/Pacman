@@ -1,4 +1,4 @@
-package Players;
+package player;
 
 import java.util.ArrayList;
 
@@ -15,13 +15,5 @@ public class Players {
 
     public Player get(int i) {
         return this.players.get(i);
-    }
-
-    public int getPosX(int i) {
-        return this.players.get(i).getPosX();
-    }
-
-    public int getPosY(int i) {
-        return  this.players.get(i).getPosY();
     }
 }
