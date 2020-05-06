@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class GameConstants {
     public static final int SCREEN_WIDTH = 380;
-    public static final int SCREEN_HEIGHT = 410;
+    public static final int SCREEN_HEIGHT = 430;
 
     public static final Color BACKGROUND_COLOR = Color.BLACK;
     public static final Color MAZE_COLOR = Color.BLUE;

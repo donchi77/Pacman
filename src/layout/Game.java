@@ -12,7 +12,7 @@ public class Game extends JFrame {
     }
 
     public void initUI() {
-        this.add(new Client("red"));
+        this.add(new Client("", "prova"));
         this.setTitle("PacMan - Multiplayer");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(new Dimension(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT));

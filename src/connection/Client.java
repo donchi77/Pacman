@@ -1,7 +1,6 @@
 package connection;
 
 import org.jetbrains.annotations.NotNull;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,6 +10,8 @@ import java.awt.event.KeyEvent;
 import static constants.GameConstants.*;
 
 public class Client extends JPanel implements ActionListener {
+    private String enemyNickname;
+
     private Dimension dimension;
     private boolean inGame = false;
     private boolean isDying = false;
@@ -28,32 +29,33 @@ public class Client extends JPanel implements ActionListener {
 
     private final short[] levelData = {
             3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-            1, 0, 15, 0, 15, 0, 11, 10, 14, 0, 11, 2, 14, 0, 4,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 4,
-            1, 0, 15, 0, 15, 0, 0, 0, 7, 0, 0, 5, 0, 0, 4,
-            1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 11, 8, 14, 0, 4,
-            1, 0, 7, 0, 7, 0, 0, 11, 12, 0, 0, 0, 0, 0, 4,
-            1, 0, 13, 0, 13, 0, 0, 0, 0, 0, 7, 0, 7, 0, 4,
-            1, 0, 0, 0, 0, 0, 0, 3, 14, 0, 13, 0, 13, 0, 4,
-            1, 0, 11, 2, 14, 0, 0, 5, 0, 0, 0, 0, 0, 0, 4,
-            1, 0, 0, 5, 0, 0, 0, 13, 0, 0, 15, 0, 15, 0, 4,
-            1, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
-            1, 0, 11, 8, 14, 0, 11, 10, 14, 0, 15, 0, 15, 0, 4,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+            1, 0, 8, 0, 8, 0, 8, 8, 8, 0, 8, 8, 8, 0, 4,
+            1, 4, 0, 5, 0, 5, 0, 0, 0, 5, 0, 0, 0, 1, 4,
+            1, 0, 10, 0, 10, 0, 2, 2, 10, 0, 6, 0, 3, 0, 4,
+            1, 4, 0, 5, 0, 1, 0, 4, 0, 1, 12, 0, 9, 0, 4,
+            1, 0, 10, 0, 10, 0, 0, 12, 0, 5, 0, 0, 0, 1, 4,
+            1, 4, 0, 5, 0, 1, 4, 0, 0, 1, 10, 2, 10, 0, 4,
+            1, 4, 0, 5, 0, 1, 0, 10, 10, 4, 0, 5, 0, 1, 4,
+            1, 0, 10, 8, 10, 0, 4, 0, 0, 5, 0, 5, 0, 1, 4,
+            1, 4, 0, 0, 0, 1, 4, 0, 3, 0, 10, 0, 10, 0, 4,
+            1, 0, 6, 0, 3, 0, 4, 0, 1, 4, 0, 5, 0, 1, 4,
+            1, 0, 12, 0, 9, 0, 8, 10, 8, 0, 10, 0, 10, 0, 4,
+            1, 4, 0, 0, 0, 5, 0, 0, 0, 5, 0, 5, 0, 1, 4,
+            1, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 0, 2, 0, 4,
             9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 12
     };
 
     private short[] screenData;
     private Timer timer;
 
-    public Client(String pacmanColor) {
-        //loadImages(pacmanColor);
-        initVariables();
+    public Client(String pacmanColor, String enemyNickname) {
+        loadImages(pacmanColor);
+        initVariables(enemyNickname);
         initBoard();
     }
 
-    private void initVariables() {
+    private void initVariables(String enemyNickname) {
+        this.enemyNickname = enemyNickname;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -62,6 +64,7 @@ public class Client extends JPanel implements ActionListener {
     }
 
     private void initBoard() {
+        setDoubleBuffered(true);
         addKeyListener(new TAdapter());
         setFocusable(true);
         setBackground(BACKGROUND_COLOR);
@@ -93,7 +96,6 @@ public class Client extends JPanel implements ActionListener {
         } else {
             movePacman();
             drawPacman(g2d);
-            checkMaze();
         }
     }
 
@@ -103,28 +105,13 @@ public class Client extends JPanel implements ActionListener {
         g2d.setColor(Color.white);
         g2d.drawRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
 
-        String s = "Press s to start.";
+        String start = "PRESS S TO START";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = this.getFontMetrics(small);
 
         g2d.setColor(Color.white);
         g2d.setFont(small);
-        g2d.drawString(s, (SCREEN_SIZE - metr.stringWidth(s)) / 2, SCREEN_SIZE / 2);
-    }
-
-    private void checkMaze() {
-        short i = 0;
-        boolean finished = true;
-
-        while (i < N_BLOCKS * N_BLOCKS && finished) {
-            if ((screenData[i] & 48) != 0)
-                finished = false;
-            i++;
-        }
-
-        if (finished) {
-            initLevel();
-        }
+        g2d.drawString(start, (SCREEN_SIZE - metr.stringWidth(start)) / 2, SCREEN_SIZE / 2);
     }
 
     private void death() {
@@ -132,25 +119,16 @@ public class Client extends JPanel implements ActionListener {
     }
 
     private void movePacman() {
-        int pos;
-        short ch;
-
         if (req_dx == -pacmand_x && req_dy == -pacmand_y) {
-            pacmand_x = req_dx;
-            pacmand_y = req_dy;
-            view_dx = pacmand_x;
-            view_dy = pacmand_y;
+            copyValues();
         }
 
         if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0) {
-            pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (pacman_y / BLOCK_SIZE);
-            ch = screenData[pos];
+            int pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (pacman_y / BLOCK_SIZE);
+            short ch = screenData[pos];
 
             if (req_dx != 0 || req_dy != 0) {
-                if (!((req_dx == -1 && req_dy == 0 && (ch & 1) != 0)
-                        || (req_dx == 1 && req_dy == 0 && (ch & 4) != 0)
-                        || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
-                        || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0))) {
+                if (!isaCorrectPosition(ch, req_dx, req_dy)) {
                     pacmand_x = req_dx;
                     pacmand_y = req_dy;
                     view_dx = pacmand_x;
@@ -158,10 +136,7 @@ public class Client extends JPanel implements ActionListener {
                 }
             }
 
-            if ((pacmand_x == -1 && pacmand_y == 0 && (ch & 1) != 0)
-                    || (pacmand_x == 1 && pacmand_y == 0 && (ch & 4) != 0)
-                    || (pacmand_x == 0 && pacmand_y == -1 && (ch & 2) != 0)
-                    || (pacmand_x == 0 && pacmand_y == 1 && (ch & 8) != 0)) {
+            if (isaCorrectPosition(screenData[pos], pacmand_x, pacmand_y)) {
                 pacmand_x = 0;
                 pacmand_y = 0;
             }
@@ -170,6 +145,20 @@ public class Client extends JPanel implements ActionListener {
         int PACMAN_SPEED = 6;
         pacman_x = pacman_x + PACMAN_SPEED * pacmand_x;
         pacman_y = pacman_y + PACMAN_SPEED * pacmand_y;
+    }
+
+    private void copyValues() {
+        pacmand_x = req_dx;
+        pacmand_y = req_dy;
+        view_dx = pacmand_x;
+        view_dy = pacmand_y;
+    }
+
+    private boolean isaCorrectPosition(short ch, int req_dx, int req_dy) {
+        return (req_dx == -1 && req_dy == 0 && (ch & 1) != 0)
+                || (req_dx == 1 && req_dy == 0 && (ch & 4) != 0)
+                || (req_dx == 0 && req_dy == -1 && (ch & 2) != 0)
+                || (req_dx == 0 && req_dy == 1 && (ch & 8) != 0);
     }
 
     private void drawPacman(Graphics2D g2d) {
@@ -296,7 +285,7 @@ public class Client extends JPanel implements ActionListener {
 
     private void continueLevel() {
         pacman_x = 7 * BLOCK_SIZE;
-        pacman_y = 11 * BLOCK_SIZE;
+        pacman_y = 13 * BLOCK_SIZE;
         pacmand_x = 0;
         pacmand_y = 0;
         req_dx = 0;
@@ -334,6 +323,7 @@ public class Client extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, dimension.width, dimension.height);
 
         drawMaze(g2d);
+        drawEnemyNickname(g2d);
         doAnim();
 
         if (inGame) {
@@ -346,9 +336,16 @@ public class Client extends JPanel implements ActionListener {
         g2d.dispose();
     }
 
+    private void drawEnemyNickname(@NotNull Graphics2D g2d) {
+        g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
+        g2d.setColor(Color.WHITE);
+        String onevone = "You are aganist: " + enemyNickname;
+        g2d.drawString(onevone, 5, SCREEN_SIZE + 16);
+    }
+
     class TAdapter extends KeyAdapter {
         @Override
-        public void keyPressed(KeyEvent e) {
+        public void keyPressed(@NotNull KeyEvent e) {
             int key = e.getKeyCode();
 
             if (inGame) {
@@ -382,7 +379,7 @@ public class Client extends JPanel implements ActionListener {
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
+        public void keyReleased(@NotNull KeyEvent e) {
             int key = e.getKeyCode();
 
             if (key == Event.LEFT || key == Event.RIGHT
