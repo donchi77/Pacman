@@ -34,10 +34,10 @@ public class ConnectionManager {
             
             //creation input e output stream
             System.out.println("Creation input and output stream...");
-            this.outputStream = socket.getOutputStream();
-            this.objectOutputStream = new ObjectOutputStream(this.outputStream);
             this.inputStream = this.socket.getInputStream();
             this.objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+            this.outputStream = socket.getOutputStream();
+            this.objectOutputStream = new ObjectOutputStream(this.outputStream);
             
         } catch (UnknownHostException e){
             System.err.println("Unreacheable host"); 
@@ -55,10 +55,30 @@ public class ConnectionManager {
         objectOutputStream.writeObject(coordinates);
     }
     
-    public void readCoordinates() throws IOException, ClassNotFoundException {
+    void readCoordinates() throws IOException, ClassNotFoundException {
         //read coordinates
         Coordinates coordinates = (Coordinates) objectInputStream.readObject();
         System.out.println("" + coordinates.getX() + " - " + coordinates.getY());
+        
+    }
+    
+    void readPlayer() throws IOException, ClassNotFoundException {
+        //Legge se è il giocatore 1 o 2
+        int p = (int) objectInputStream.readObject();
+        System.out.println("Sono il giocatore : " + p);
+        
+        //ulteriore controllo per il gicatore 1
+        if(p == 0){
+            System.out.println("In attesa di un'altro giocatore...");
+            
+            //variabile d'appoggo, per bloccare il player 1 fino a quando non si è connesso il player 2
+            int gamestart = (int) objectInputStream.readObject();
+            
+            System.out.println("Il secondo giocatore si è connesso, la partita inizia!");
+        }
+        else{
+            int gamestart = (int) objectInputStream.readObject();
+        }
     }
 }
 

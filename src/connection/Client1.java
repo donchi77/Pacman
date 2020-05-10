@@ -17,12 +17,14 @@ public class Client1 {
         //creation socket
         connectionM = new ConnectionManager();
         
-        //send coordinate
-        connectionM.writeCoordinates(9, 9);
-        System.out.println("9 - 9");
+        //read player 1 or 2
+        connectionM.readPlayer();
         
-        //receive coordinates
-        connectionM.readCoordinates();
+        //send and receive coordinates
+        while(true){
+            connectionM.writeCoordinates(5, 9);
+            connectionM.readCoordinates();
+        }
         
     }
 }
