@@ -1,6 +1,5 @@
 package layout;
 
-import connection.Client;
 import constants.GameConstants;
 
 import javax.swing.*;
@@ -12,7 +11,7 @@ public class Game extends JFrame {
     }
 
     public void initUI() {
-        this.add(new Client("", "prova"));
+        this.add(new Map("prova", "prova", true));
         this.setTitle("PacMan - Multiplayer");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(new Dimension(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT));
