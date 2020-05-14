@@ -11,12 +11,12 @@ public class Coordinates implements Serializable{
     int y;
 
     //Immagine
-    String image;
+    String imageFile;
     
-    public Coordinates(int x, int y, String image) {
+    public Coordinates(int x, int y, String imageFile) {
         this.x = x;
         this.y = y;
-        this.image = image;
+        this.imageFile = imageFile;
     }
 
     public int getX() {
@@ -27,8 +27,8 @@ public class Coordinates implements Serializable{
         return y;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageFile() {
+        return imageFile;
     }
     
 }

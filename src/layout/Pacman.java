@@ -10,6 +10,8 @@ import static constants.GameConstants.*;
 public class Pacman {
     private final String username;
     private final boolean isPlayerOne;
+    private boolean isCannibal;
+
     private Flag flag;
     private boolean isEnemyFlagTaken;
 
@@ -28,6 +30,7 @@ public class Pacman {
         if (isPlayerOne) this.flag = new Flag(208, false);
         this.isEnemyFlagTaken = false;
         this.username = username;
+        this.isCannibal = false;
         loadImages();
     }
 

@@ -11,6 +11,7 @@ import static constants.GameConstants.*;
 
 public class Map extends JPanel implements ActionListener {
     Pacman pacman;
+    private boolean isEnemyInitialized;
     private String enemyNickname;
 
     private Dimension dimension;
@@ -37,6 +38,7 @@ public class Map extends JPanel implements ActionListener {
 
     private void initVariables(String nickname, String enemyNickname, boolean isPlayerOne) {
         pacman = new Pacman(nickname, isPlayerOne);
+        isEnemyInitialized = false;
         this.enemyNickname = enemyNickname;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -151,6 +153,11 @@ public class Map extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, dimension.width, dimension.height);
+
+        if (!isEnemyInitialized) {
+            new EnemyPacman(this, g2d).run();
+            isEnemyInitialized = true;
+        }
 
         drawMaze(g2d);
         drawEnemyNickname(g2d);
