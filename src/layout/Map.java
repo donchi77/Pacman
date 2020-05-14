@@ -17,13 +17,22 @@ public class Map extends JPanel implements ActionListener {
     private boolean inGame = false;
     private boolean isDying = false;
 
+    private Image flagY;
+    private Image flagR;
+
     private final short[] levelData = MAP_DESIGN;
     private short[] screenData;
     private Timer timer;
 
     public Map(String nickname, String enemyNickname, boolean isPlayerOne) {
+        loadImages();
         initVariables(nickname, enemyNickname, isPlayerOne);
         initBoard();
+    }
+
+    private void loadImages() {
+        flagY = new ImageIcon("images/flagY.png").getImage();
+        flagR = new ImageIcon("images/flagR.png").getImage();
     }
 
     private void initVariables(String nickname, String enemyNickname, boolean isPlayerOne) {
@@ -106,8 +115,11 @@ public class Map extends JPanel implements ActionListener {
                 }
 
                 if ((screenData[i] & 16) != 0) {
-                    g2d.setColor(pacman.getIsPlayerOne() ? Color.YELLOW : Color.RED);
-                    g2d.drawOval(x + 5, y + 5, 15, 15);
+                    boolean temp = pacman.getIsPlayerOne();
+                    g2d.drawImage(temp ? flagY : flagR,
+                            temp ? x - 3 : x + 3,
+                            temp ? y - 5 : y,
+                            this);
                 }
 
                 i++;

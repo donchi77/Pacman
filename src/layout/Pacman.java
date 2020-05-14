@@ -19,7 +19,6 @@ public class Pacman {
 
     private Image pacman1, pacman2up, pacman2left, pacman2right, pacman2down;
     private Image pacman3up, pacman3down, pacman3left, pacman3right;
-    private Image pacman4up, pacman4down, pacman4left, pacman4right;
 
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
@@ -47,16 +46,12 @@ public class Pacman {
         pacman1 = new ImageIcon("images/pacman" + returnColor() + ".png").getImage();
         pacman2up = new ImageIcon("images/up1" + returnColor() + ".png").getImage();
         pacman3up = new ImageIcon("images/up2" + returnColor() + ".png").getImage();
-        pacman4up = new ImageIcon("images/up3" + returnColor() + ".png").getImage();
         pacman2down = new ImageIcon("images/down1" + returnColor() + ".png").getImage();
         pacman3down = new ImageIcon("images/down2" + returnColor() + ".png").getImage();
-        pacman4down = new ImageIcon("images/down3" + returnColor() + ".png").getImage();
         pacman2left = new ImageIcon("images/left1" + returnColor() + ".png").getImage();
         pacman3left = new ImageIcon("images/left2" + returnColor() + ".png").getImage();
-        pacman4left = new ImageIcon("images/left3" + returnColor() + ".png").getImage();
         pacman2right = new ImageIcon("images/right1" + returnColor() + ".png").getImage();
         pacman3right = new ImageIcon("images/right2" + returnColor() + ".png").getImage();
-        pacman4right = new ImageIcon("images/right3" + returnColor() + ".png").getImage();
     }
 
     public void movePacman(Graphics2D g2d, short[] screenData) {
@@ -151,9 +146,6 @@ public class Pacman {
             case 2:
                 g2d.drawImage(pacman3up, pacman_x + 1, pacman_y + 1, map);
                 break;
-            case 3:
-                g2d.drawImage(pacman4up, pacman_x + 1, pacman_y + 1, map);
-                break;
             default:
                 g2d.drawImage(pacman1, pacman_x + 1, pacman_y + 1, map);
                 break;
@@ -167,9 +159,6 @@ public class Pacman {
                 break;
             case 2:
                 g2d.drawImage(pacman3down, pacman_x + 1, pacman_y + 1, map);
-                break;
-            case 3:
-                g2d.drawImage(pacman4down, pacman_x + 1, pacman_y + 1, map);
                 break;
             default:
                 g2d.drawImage(pacman1, pacman_x + 1, pacman_y + 1, map);
@@ -185,9 +174,6 @@ public class Pacman {
             case 2:
                 g2d.drawImage(pacman3left, pacman_x + 1, pacman_y + 1, map);
                 break;
-            case 3:
-                g2d.drawImage(pacman4left, pacman_x + 1, pacman_y + 1, map);
-                break;
             default:
                 g2d.drawImage(pacman1, pacman_x + 1, pacman_y + 1, map);
                 break;
@@ -201,9 +187,6 @@ public class Pacman {
                 break;
             case 2:
                 g2d.drawImage(pacman3right, pacman_x + 1, pacman_y + 1, map);
-                break;
-            case 3:
-                g2d.drawImage(pacman4right, pacman_x + 1, pacman_y + 1, map);
                 break;
             default:
                 g2d.drawImage(pacman1, pacman_x + 1, pacman_y + 1, map);
