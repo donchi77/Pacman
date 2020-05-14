@@ -68,13 +68,22 @@ public class ConnectionManager {
         return null;
     }
     
-    void readPlayer() throws IOException, ClassNotFoundException {
+    public boolean readPlayer() throws IOException, ClassNotFoundException {
         //Legge se è il giocatore 1 o 2
         int p = (int) objectInputStream.readObject();
         System.out.println("Sono il giocatore : " + p);
         
-        //ulteriore controllo per il gicatore 1
         if(p == 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void playersConnected(boolean isPlayerOne) throws IOException, ClassNotFoundException{
+        
+        //ulteriore controllo per il gicatore 1
+        if(isPlayerOne){
             System.out.println("In attesa di un'altro giocatore...");
             
             //variabile d'appoggo, per bloccare il player 1 fino a quando non si è connesso il player 2
@@ -83,6 +92,7 @@ public class ConnectionManager {
             System.out.println("Il secondo giocatore si è connesso, la partita inizia!");
         }
         else{
+            System.out.println("Il giocatore 1 è gia collegato");
             int gamestart = (int) objectInputStream.readObject();
         }
     }

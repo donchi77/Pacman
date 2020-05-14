@@ -1,8 +1,9 @@
 package layout;
 
+import connection.ConnectionManager;
 import connection.Coordinates;
 import connection.Sender;
-import org.jetbrains.annotations.NotNull;
+//import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,8 +27,12 @@ public class Pacman {
 
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
+    
+    ConnectionManager connectionM;
 
-    public Pacman(String username, boolean isPlayerOne) {
+    public Pacman(String username, boolean isPlayerOne, ConnectionManager connectionM) {
+        this.connectionM = connectionM;
+        
         this.username = username;
 
         this.isPlayerOne = isPlayerOne;
@@ -137,16 +142,16 @@ public class Pacman {
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
         if (view_dx == -1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT))).run();
+            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT))).run();
+            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP))).run();
+            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
             drawPacmanUp(g2d, map);
         } else {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN))).run();
+            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
             drawPacmanDown(g2d, map);
         }
     }
@@ -207,7 +212,7 @@ public class Pacman {
         }
     }
 
-    private String getImageFileName(@NotNull String action) {
+    private String getImageFileName(/*@NotNull*/ String action) {
         switch (action) {
             case MOVING_UP:
                 switch (pacmanAnimPos) {
@@ -250,7 +255,7 @@ public class Pacman {
         return action;
     }
 
-    private void drawScoreString(@NotNull Graphics2D g2d) {
+    private void drawScoreString(/*@NotNull*/ Graphics2D g2d) {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.setColor(Color.WHITE);
         String onevone = "Enemy flag has been rescued!";

@@ -1,6 +1,7 @@
 package layout;
 
 import com.sun.istack.internal.NotNull;
+import connection.ConnectionManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import static constants.GameConstants.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Map extends JPanel implements ActionListener {
     Pacman pacman;
@@ -24,10 +28,17 @@ public class Map extends JPanel implements ActionListener {
     private final short[] levelData = MAP_DESIGN;
     private short[] screenData;
     private Timer timer;
+    
+    ConnectionManager connectionM;
+    boolean isPlayerOne;
+    boolean isStarted;
 
-    public Map(String nickname, String enemyNickname, boolean isPlayerOne) {
+    public Map(String nickname, String enemyNickname, boolean isPlayerOne, ConnectionManager connectionM) throws IOException, ClassNotFoundException {
+        this.connectionM = connectionM;
+        this.isPlayerOne = isPlayerOne;
+        
         loadImages();
-        initVariables(nickname, enemyNickname, isPlayerOne);
+        initVariables(nickname, enemyNickname);
         initBoard();
     }
 
@@ -36,12 +47,13 @@ public class Map extends JPanel implements ActionListener {
         flagR = new ImageIcon("images/flagR.png").getImage();
     }
 
-    private void initVariables(String nickname, String enemyNickname, boolean isPlayerOne) {
-        pacman = new Pacman(nickname, isPlayerOne);
+    private void initVariables(String nickname, String enemyNickname) {
+        pacman = new Pacman(nickname, isPlayerOne, connectionM);
         isEnemyInitialized = false;
         this.enemyNickname = enemyNickname;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
+        isStarted = false;
 
         timer = new Timer(40, this);
         timer.start();
@@ -57,7 +69,13 @@ public class Map extends JPanel implements ActionListener {
     @Override
     public void addNotify() {
         super.addNotify();
-        initGame();
+        try {
+            initGame();
+        } catch (IOException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void playGame(Graphics2D g2d) {
@@ -69,7 +87,7 @@ public class Map extends JPanel implements ActionListener {
         }
     }
 
-    private void showIntroScreen(@NotNull Graphics2D g2d) {
+    private void showIntroScreen(@NotNull Graphics2D g2d) throws IOException, ClassNotFoundException {
         g2d.setColor(new Color(0, 32, 48));
         g2d.fillRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
         g2d.setColor(Color.white);
@@ -129,7 +147,7 @@ public class Map extends JPanel implements ActionListener {
         }
     }
 
-    private void initGame() {
+    private void initGame() throws IOException, ClassNotFoundException {
         initLevel();
     }
 
@@ -146,19 +164,26 @@ public class Map extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        doDrawing(g);
+        try {
+            doDrawing(g);
+        } catch (IOException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void doDrawing(Graphics g) {
+    private void doDrawing(Graphics g) throws IOException, ClassNotFoundException {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, dimension.width, dimension.height);
 
-        if (!isEnemyInitialized) {
-            new EnemyPacman(this, g2d).run();
+        if (!isEnemyInitialized && isStarted) {
+            EnemyPacman enemyPacman = new EnemyPacman(this, g2d, connectionM);
             isEnemyInitialized = true;
+            isStarted = false;
         }
-
+            
         drawMaze(g2d);
         drawEnemyNickname(g2d);
         pacman.doAnim();
@@ -209,8 +234,18 @@ public class Map extends JPanel implements ActionListener {
                 }
             } else {
                 if (key == 's' || key == 'S') {
+                    try {
+                        connectionM.playersConnected(isPlayerOne);
+                        isStarted = true;
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     inGame = true;
-                    initGame();
+                    try {
+                        initGame();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }

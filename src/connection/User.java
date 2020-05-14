@@ -31,6 +31,7 @@ public class User implements Runnable{
     boolean check = true;
     //variabili che indicano al giocatore 1 l'inizio della partita
     boolean gameStart = false;
+    boolean gameStart2 = false;
     
     public User(Socket socket, int player, Server server){
         //setta l'oggetto server
@@ -68,8 +69,18 @@ public class User implements Runnable{
                 int k = 10;
                 System.out.println("pog");
                 //ciclo inifinito fino a quando il giocatore 2 non si connette
-                while(gameStart == false) { }
-                objectOutputStream.writeObject(k);
+                while(gameStart == false) { 
+                    System.out.println("monkas");
+                    if(gameStart == true){
+                        objectOutputStream.writeObject(k);
+                        System.out.println("kekw");
+                        gameStart2 = true;
+                    }
+                    System.out.println("azz");
+                }
+                if(gameStart2 == false){
+                    objectOutputStream.writeObject(k);
+                }
             }
             else{
                 int k = 10;
