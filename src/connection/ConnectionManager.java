@@ -49,10 +49,12 @@ public class ConnectionManager {
         }
     }
     
-    public void writeCoordinates(int x, int y, String imageFile) throws IOException{
-        //send coordinates
-        Coordinates coordinates = new Coordinates(x, y, imageFile);
-        objectOutputStream.writeObject(coordinates);
+    public void writeCoordinates(Coordinates coordinates) {
+        try {
+            objectOutputStream.writeObject(coordinates);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public Coordinates readCoordinates() {

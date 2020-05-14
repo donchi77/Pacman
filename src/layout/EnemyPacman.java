@@ -17,16 +17,11 @@ public class EnemyPacman implements Runnable {
     }
 
     @Override
-    public void run() {
+    synchronized public void run() {
         while(true) {
             Coordinates coordinates = connectionManager.readCoordinates();
-
-            synchronized (map) {
-                synchronized (g2d) {
-                    g2d.drawImage(new ImageIcon(coordinates.getImageFile()).getImage(),
-                            coordinates.getX(), coordinates.getY(), map);
-                }
-            }
+            g2d.drawImage(new ImageIcon("images/" + coordinates.getImageFile() + ".png").getImage(),
+                    coordinates.getX(), coordinates.getY(), map);
         }
     }
 }

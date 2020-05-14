@@ -3,15 +3,14 @@ package connection;
 import java.io.Serializable;
 
 public class Coordinates implements Serializable{
-    
     static final long serialVersionUID = 1L;
     
     //coordinate
-    int x;
-    int y;
+    private final int x;
+    private final int y;
 
     //Immagine
-    String imageFile;
+    private final String imageFile;
     
     public Coordinates(int x, int y, String imageFile) {
         this.x = x;

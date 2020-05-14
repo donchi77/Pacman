@@ -1,6 +1,7 @@
 package layout;
 
-import org.jetbrains.annotations.Contract;
+import connection.Coordinates;
+import connection.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class Pacman {
     private int pacAnimDir = 1;
     private int pacmanAnimPos = 0;
 
+    private final char playerColor;
     private Image pacman1, pacman2up, pacman2left, pacman2right, pacman2down;
     private Image pacman3up, pacman3down, pacman3left, pacman3right;
 
@@ -26,11 +28,15 @@ public class Pacman {
     private int req_dx, req_dy, view_dx, view_dy;
 
     public Pacman(String username, boolean isPlayerOne) {
-        this.isPlayerOne = isPlayerOne;
-        if (isPlayerOne) this.flag = new Flag(208, false);
-        this.isEnemyFlagTaken = false;
         this.username = username;
-        this.isCannibal = false;
+
+        this.isPlayerOne = isPlayerOne;
+        if (isPlayerOne) flag = new Flag(208, false);
+        if (isPlayerOne) playerColor = 'Y'; else playerColor = 'R';
+
+        isCannibal = false;
+        isEnemyFlagTaken = false;
+
         loadImages();
     }
 
@@ -46,15 +52,15 @@ public class Pacman {
     }
 
     private void loadImages() {
-        pacman1 = new ImageIcon("images/pacman" + returnColor() + ".png").getImage();
-        pacman2up = new ImageIcon("images/up1" + returnColor() + ".png").getImage();
-        pacman3up = new ImageIcon("images/up2" + returnColor() + ".png").getImage();
-        pacman2down = new ImageIcon("images/down1" + returnColor() + ".png").getImage();
-        pacman3down = new ImageIcon("images/down2" + returnColor() + ".png").getImage();
-        pacman2left = new ImageIcon("images/left1" + returnColor() + ".png").getImage();
-        pacman3left = new ImageIcon("images/left2" + returnColor() + ".png").getImage();
-        pacman2right = new ImageIcon("images/right1" + returnColor() + ".png").getImage();
-        pacman3right = new ImageIcon("images/right2" + returnColor() + ".png").getImage();
+        pacman1 = new ImageIcon("images/pacman" + playerColor + ".png").getImage();
+        pacman2up = new ImageIcon("images/up1" + playerColor + ".png").getImage();
+        pacman3up = new ImageIcon("images/up2" + playerColor + ".png").getImage();
+        pacman2down = new ImageIcon("images/down1" + playerColor + ".png").getImage();
+        pacman3down = new ImageIcon("images/down2" + playerColor + ".png").getImage();
+        pacman2left = new ImageIcon("images/left1" + playerColor + ".png").getImage();
+        pacman3left = new ImageIcon("images/left2" + playerColor + ".png").getImage();
+        pacman2right = new ImageIcon("images/right1" + playerColor + ".png").getImage();
+        pacman3right = new ImageIcon("images/right2" + playerColor + ".png").getImage();
     }
 
     public void movePacman(Graphics2D g2d, short[] screenData) {
@@ -131,12 +137,16 @@ public class Pacman {
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
         if (view_dx == -1) {
+            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT))).run();
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
+            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT))).run();
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
+            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP))).run();
             drawPacmanUp(g2d, map);
         } else {
+            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN))).run();
             drawPacmanDown(g2d, map);
         }
     }
@@ -197,16 +207,54 @@ public class Pacman {
         }
     }
 
+    private String getImageFileName(@NotNull String action) {
+        switch (action) {
+            case MOVING_UP:
+                switch (pacmanAnimPos) {
+                    case 1:
+                        return "up1" + playerColor;
+                    case 2:
+                        return "up2" + playerColor;
+                    default:
+                        return "pacman" + playerColor;
+                }
+            case MOVING_DOWN:
+                switch (pacmanAnimPos) {
+                    case 1:
+                        return "down1" + playerColor;
+                    case 2:
+                        return "down2" + playerColor;
+                    default:
+                        return "pacman" + playerColor;
+                }
+            case MOVING_LEFT:
+                switch (pacmanAnimPos) {
+                    case 1:
+                        return "left1" + playerColor;
+                    case 2:
+                        return "left2" + playerColor;
+                    default:
+                        return "pacman" + playerColor;
+                }
+            case MOVING_RIGHT:
+                switch (pacmanAnimPos) {
+                    case 1:
+                        return "right1" + playerColor;
+                    case 2:
+                        return "right2" + playerColor;
+                    default:
+                        return "pacman" + playerColor;
+                }
+        }
+
+        return action;
+    }
+
     private void drawScoreString(@NotNull Graphics2D g2d) {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.setColor(Color.WHITE);
         String onevone = "Enemy flag has been rescued!";
         g2d.drawString(onevone, 5, SCREEN_SIZE + 16);
-    }
-
-    @Contract(pure = true)
-    private char returnColor() {
-        return this.isPlayerOne ? 'Y' : 'R';
     }
 
     public String getUsername() { return this.username; }

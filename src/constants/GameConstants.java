@@ -30,4 +30,9 @@ public class GameConstants {
             1, 9, 10, 10, 10, 8, 10, 10, 10, 8, 10, 8, 10, 28, 4,
             9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 12
     };
+
+    public static final String MOVING_UP = "UP";
+    public static final String MOVING_DOWN = "DOWN";
+    public static final String MOVING_LEFT = "LEFT";
+    public static final String MOVING_RIGHT = "RIGHT";
 }
