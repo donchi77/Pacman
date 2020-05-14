@@ -137,16 +137,16 @@ public class Pacman {
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
         if (view_dx == -1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT))).run();
+            //new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT))).run();
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT))).run();
+            //new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT))).run();
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP))).run();
+            //new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP))).run();
             drawPacmanUp(g2d, map);
         } else {
-            new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN))).run();
+            //new Sender(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN))).run();
             drawPacmanDown(g2d, map);
         }
     }

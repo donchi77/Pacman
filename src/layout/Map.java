@@ -43,7 +43,7 @@ public class Map extends JPanel implements ActionListener {
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        timer = new Timer(40, this);
+        timer = new Timer(50, this);
         timer.start();
     }
 
@@ -155,7 +155,7 @@ public class Map extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, dimension.width, dimension.height);
 
         if (!isEnemyInitialized) {
-            new EnemyPacman(this, g2d).run();
+            //new EnemyPacman(this, g2d).run();
             isEnemyInitialized = true;
         }
 
