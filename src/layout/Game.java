@@ -8,18 +8,19 @@ import java.awt.*;
 import java.io.IOException;
 
 public class Game extends JFrame {
+    private ConnectionManager connectionManager;
     
-    ConnectionManager connectionM;
-    
-    public Game() throws IOException, ClassNotFoundException {
+    public Game() {
         initUI();
     }
 
-    public void initUI() throws IOException, ClassNotFoundException {
-        
+    public void initUI() {
         startConnection();
-        
-        this.add(new Map("prova", "prova", connectionM.readPlayer(), connectionM));
+        try {
+            this.add(new Map(connectionManager.readPlayer(), connectionManager));
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         this.setTitle("PacMan - Multiplayer");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(new Dimension(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT));
@@ -31,6 +32,6 @@ public class Game extends JFrame {
     }
 
     private void startConnection() {
-        connectionM = new ConnectionManager();
+        connectionManager = new ConnectionManager();
     }
 }

@@ -72,12 +72,8 @@ public class ConnectionManager {
         //Legge se è il giocatore 1 o 2
         int p = (int) objectInputStream.readObject();
         System.out.println("Sono il giocatore : " + p);
-        
-        if(p == 0){
-            return true;
-        } else {
-            return false;
-        }
+
+        return p == 0;
     }
     
     public void playersConnected(boolean isPlayerOne) throws IOException, ClassNotFoundException{

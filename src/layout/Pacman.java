@@ -10,11 +10,9 @@ import java.awt.*;
 import static constants.GameConstants.*;
 
 public class Pacman {
-    private final String username;
     private final boolean isPlayerOne;
-    private boolean isCannibal;
 
-    private Flag flag;
+    private final Flag enemyFlag;
     private boolean isEnemyFlagTaken;
 
     private int pacAnimCount = PAC_ANIM_DELAY;
@@ -28,26 +26,22 @@ public class Pacman {
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
     
-    ConnectionManager connectionM;
+    private final ConnectionManager connectionManager;
 
-    public Pacman(String username, boolean isPlayerOne, ConnectionManager connectionM) {
-        this.connectionM = connectionM;
-        
-        this.username = username;
+    public Pacman(boolean isPlayerOne, ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
 
         this.isPlayerOne = isPlayerOne;
-        if (isPlayerOne) flag = new Flag(208, false);
-        if (isPlayerOne) playerColor = 'Y'; else playerColor = 'R';
-
-        isCannibal = false;
+        enemyFlag = isPlayerOne ? new Flag(208, false) : new Flag(16, false);
         isEnemyFlagTaken = false;
 
+        playerColor = isPlayerOne ? 'Y' : 'R';
         loadImages();
     }
 
     public void setAttributes() {
         pacman_x = 7 * BLOCK_SIZE;
-        pacman_y = 13 * BLOCK_SIZE;
+        pacman_y = isPlayerOne ? BLOCK_SIZE : 13 * BLOCK_SIZE;
         pacmand_x = 0;
         pacmand_y = 0;
         req_dx = 0;
@@ -78,7 +72,7 @@ public class Pacman {
             short ch = screenData[pos];
 
             if ((ch & 16) != 0) {
-                if (pos != flag.getPosition()) {
+                if (pos == enemyFlag.getPosition()) {
                     this.isEnemyFlagTaken = true;
                     screenData[pos] = (short) (ch & 15);
                     // TODO: SEND AHAH TI HO PRESO LA BANDIERA
@@ -86,7 +80,7 @@ public class Pacman {
                     if (this.isEnemyFlagTaken) {
                         drawScoreString(g2d);
                         this.isEnemyFlagTaken = false;
-                        screenData[16] += 16;
+                        screenData[enemyFlag.getPosition()] += 16;
                     }
                     // TODO: SEND AHAH HO SEGNATO UN PUNTO
                 }
@@ -142,16 +136,20 @@ public class Pacman {
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
         if (view_dx == -1) {
-            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
+            connectionManager.writeCoordinates(
+                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT)));
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
-            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
+            connectionManager.writeCoordinates(
+                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
-            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
+            connectionManager.writeCoordinates(
+                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP)));
             drawPacmanUp(g2d, map);
         } else {
-            connectionM.writeCoordinates(new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
+            connectionManager.writeCoordinates(
+                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN)));
             drawPacmanDown(g2d, map);
         }
     }
@@ -212,7 +210,7 @@ public class Pacman {
         }
     }
 
-    private String getImageFileName(/*@NotNull*/ String action) {
+    private String getImageFileName(String action) {
         switch (action) {
             case MOVING_UP:
                 switch (pacmanAnimPos) {
@@ -255,14 +253,13 @@ public class Pacman {
         return action;
     }
 
-    private void drawScoreString(/*@NotNull*/ Graphics2D g2d) {
+    private void drawScoreString(Graphics2D g2d) {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.setColor(Color.WHITE);
         String onevone = "Enemy flag has been rescued!";
         g2d.drawString(onevone, 5, SCREEN_SIZE + 16);
     }
 
-    public String getUsername() { return this.username; }
     public boolean getIsPlayerOne() { return this.isPlayerOne; }
     public void setReq_dx(int req_dx) { this.req_dx = req_dx; }
     public void setReq_dy(int req_dy) { this.req_dy = req_dy; }
