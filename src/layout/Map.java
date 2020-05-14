@@ -165,14 +165,6 @@ public class Map extends JPanel implements ActionListener {
         g2d.fillRect(0, 0, dimension.width, dimension.height);
 
         if (!isEnemyInitialized && isStarted) {
-            EnemyPacman enemyPacman = new EnemyPacman(this, g2d, connectionManager);
-            Thread dataReceiver = new Thread(enemyPacman);
-            try {
-                dataReceiver.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            dataReceiver.start();
             isEnemyInitialized = true;
             isStarted = false;
         }
