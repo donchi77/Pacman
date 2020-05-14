@@ -11,7 +11,7 @@ public class GameConstants {
     public static final int BLOCK_SIZE = 24;
     public static final int N_BLOCKS = 15;
     public static final int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
-    public static final int PAC_ANIM_DELAY = 3;
+    public static final int PAC_ANIM_DELAY = 2;
 
     public static final short[] MAP_DESIGN = {
             3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6,
