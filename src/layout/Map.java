@@ -32,6 +32,8 @@ public class Map extends JPanel implements ActionListener {
     boolean isPlayerOne;
     boolean isStarted;
 
+    EnemyPacman enemyPacman;
+
     public Map(boolean isPlayerOne, ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         this.isPlayerOne = isPlayerOne;
@@ -76,6 +78,7 @@ public class Map extends JPanel implements ActionListener {
         } else {
             pacman.movePacman(g2d, screenData);
             pacman.drawPacman(g2d, this);
+            enemyPacman.drawEnemy(g2d, this);
         }
     }
 
