@@ -82,6 +82,7 @@ public class Server {
         //salva il numero del giocatore
         int player = p+1;
         System.out.println("Ricezione dal giocatore " + player + " : x -" + coordinates.getX() + " e y - " + coordinates.getY());
+        System.out.println("Nome Immagine : " + coordinates.getImage());
         
         //inizializzazione dell'oggetto user
         User u;

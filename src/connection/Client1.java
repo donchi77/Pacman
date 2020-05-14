@@ -22,8 +22,10 @@ public class Client1 {
         
         //send and receive coordinates
         while(true){
-            connectionM.writeCoordinates(5, 9);
-            connectionM.readCoordinates();
+            connectionM.writeCoordinates(5, 9, "prova");
+
+            Coordinates coordinates = connectionM.readCoordinates();
+            System.out.println("" + coordinates.getX() + " - " + coordinates.getY() + " - Immagine : " + coordinates.getImage());
         }
         
     }

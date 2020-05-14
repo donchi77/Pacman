@@ -49,17 +49,15 @@ public class ConnectionManager {
         }
     }
     
-    public void writeCoordinates(int x, int y) throws IOException{
+    public void writeCoordinates(int x, int y, String image) throws IOException{
         //send coordinates
-        Coordinates coordinates = new Coordinates(x, y);
+        Coordinates coordinates = new Coordinates(x, y, image);
         objectOutputStream.writeObject(coordinates);
     }
     
-    void readCoordinates() throws IOException, ClassNotFoundException {
+    public Coordinates readCoordinates() throws IOException, ClassNotFoundException {
         //read coordinates
-        Coordinates coordinates = (Coordinates) objectInputStream.readObject();
-        System.out.println("" + coordinates.getX() + " - " + coordinates.getY());
-        
+        return (Coordinates) objectInputStream.readObject();
     }
     
     void readPlayer() throws IOException, ClassNotFoundException {

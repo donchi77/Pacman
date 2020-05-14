@@ -9,10 +9,14 @@ public class Coordinates implements Serializable{
     //coordinate
     int x;
     int y;
+
+    //Immagine
+    String image;
     
-    public Coordinates(int x, int y) {
+    public Coordinates(int x, int y, String image) {
         this.x = x;
         this.y = y;
+        this.image = image;
     }
 
     public int getX() {
@@ -21,6 +25,10 @@ public class Coordinates implements Serializable{
 
     public int getY() {
         return y;
+    }
+
+    public String getImage() {
+        return image;
     }
     
 }
