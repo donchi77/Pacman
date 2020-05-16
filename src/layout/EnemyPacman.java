@@ -7,14 +7,9 @@ import java.awt.*;
 
 public class EnemyPacman implements Runnable {
     private final ConnectionManager connectionManager;
-    private final JPanel map;
-    private final Graphics2D g2d;
     
-    public EnemyPacman(JPanel map, Graphics2D g2d, ConnectionManager connectionM) {
-        this.connectionManager = connectionM;
-        this.map = map;
-        this.g2d = g2d;
-        
+    public EnemyPacman(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
         new Thread(this).start();
     }
 
@@ -28,7 +23,7 @@ public class EnemyPacman implements Runnable {
         }*/
     }
 
-    public void drawEnemy(Graphics2D g2d, JPanel map){
+    synchronized public void drawEnemy(Graphics2D g2d, JPanel map){
         Coordinates coordinates = connectionManager.readCoordinates();
         System.out.println("x : " + coordinates.getX() + " - y : " + coordinates.getY() + " - file : " + coordinates.getImageFile());
         g2d.drawImage(new ImageIcon("images/" + coordinates.getImageFile() + ".png").getImage(), coordinates.getX(), coordinates.getY(), map);

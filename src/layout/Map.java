@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 public class Map extends JPanel implements ActionListener {
     Pacman pacman;
+    EnemyPacman enemyPacman;
     private boolean isEnemyInitialized;
 
     private Dimension dimension;
@@ -32,8 +33,6 @@ public class Map extends JPanel implements ActionListener {
     boolean isPlayerOne;
     boolean isStarted;
 
-    EnemyPacman enemyPacman;
-
     public Map(boolean isPlayerOne, ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         this.isPlayerOne = isPlayerOne;
@@ -50,6 +49,7 @@ public class Map extends JPanel implements ActionListener {
 
     private void initVariables() {
         pacman = new Pacman(isPlayerOne, connectionManager);
+        enemyPacman = new EnemyPacman(connectionManager);
         isEnemyInitialized = false;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -72,7 +72,7 @@ public class Map extends JPanel implements ActionListener {
         initGame();
     }
 
-    synchronized private void playGame(Graphics2D g2d) {
+    private void playGame(Graphics2D g2d) {
         if (isDying) {
             death();
         } else {
@@ -82,7 +82,7 @@ public class Map extends JPanel implements ActionListener {
         }
     }
 
-    synchronized private void showIntroScreen(@NotNull Graphics2D g2d) {
+    private void showIntroScreen(@NotNull Graphics2D g2d) {
         g2d.setColor(new Color(0, 32, 48));
         g2d.fillRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
         g2d.setColor(Color.white);
@@ -101,7 +101,7 @@ public class Map extends JPanel implements ActionListener {
 
     }
 
-    synchronized private void drawMaze(Graphics2D g2d) {
+    private void drawMaze(Graphics2D g2d) {
         short i = 0;
         int x, y;
 
@@ -142,16 +142,16 @@ public class Map extends JPanel implements ActionListener {
         }
     }
 
-    synchronized private void initGame() {
+    private void initGame() {
         initLevel();
     }
 
-    synchronized private void initLevel() {
+    private void initLevel() {
         System.arraycopy(levelData, 0, screenData, 0, N_BLOCKS * N_BLOCKS);
         continueLevel();
     }
 
-    synchronized private void continueLevel() {
+    private void continueLevel() {
         pacman.setAttributes();
         isDying = false;
     }
@@ -162,7 +162,7 @@ public class Map extends JPanel implements ActionListener {
         doDrawing(g);
     }
 
-    synchronized private void doDrawing(Graphics g) {
+    private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, dimension.width, dimension.height);
@@ -186,7 +186,7 @@ public class Map extends JPanel implements ActionListener {
         g2d.dispose();
     }
 
-    synchronized private void showScore(@NotNull Graphics2D g2d) {
+    private void showScore(@NotNull Graphics2D g2d) {
         // TODO: score delle bandiere
     }
 
