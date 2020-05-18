@@ -2,19 +2,9 @@ package layout;
 
 public class Flag {
     private int position;
-    private boolean isTaken;
 
-    public Flag(int position, boolean isTaken) {
+    public Flag(int position) {
         this.position = position;
-        this.isTaken = isTaken;
-    }
-
-    public boolean isTaken() {
-        return isTaken;
-    }
-
-    public void setTaken(boolean taken) {
-        isTaken = taken;
     }
 
     public int getPosition() {

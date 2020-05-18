@@ -76,9 +76,9 @@ public class Map extends JPanel implements ActionListener {
         if (isDying) {
             death();
         } else {
-            pacman.movePacman(g2d, screenData);
+            pacman.movePacman(screenData);
             pacman.drawPacman(g2d, this);
-            enemyPacman.drawEnemy(g2d, this);
+            enemyPacman.drawEnemy(g2d, this, pacman.getFlags(), screenData);
         }
     }
 
@@ -129,12 +129,24 @@ public class Map extends JPanel implements ActionListener {
                             y + BLOCK_SIZE - 1);
                 }
 
+                boolean isMine = true;
                 if ((screenData[i] & 16) != 0) {
-                    boolean temp = pacman.getIsPlayerOne();
-                    g2d.drawImage(temp ? flagY : flagR,
-                            temp ? x - 3 : x + 3,
-                            temp ? y - 5 : y,
-                            this);
+                    for (Flag flag : pacman.getFlags().getEnemyFlags()) {
+                        if (flag.getPosition() == i) {
+                            g2d.drawImage(isPlayerOne ? flagR : flagY,
+                                    isPlayerOne ? x - 3 : x + 3,
+                                    isPlayerOne ? y - 5 : y,
+                                    this);
+                            isMine = false;
+                            break;
+                        }
+                    }
+
+                    if (isMine)
+                        g2d.drawImage(isPlayerOne ? flagY : flagR,
+                                isPlayerOne ? x + 3 : x - 3,
+                                isPlayerOne ? y : y - 5,
+                                this);
                 }
 
                 i++;
@@ -187,7 +199,9 @@ public class Map extends JPanel implements ActionListener {
     }
 
     private void showScore(@NotNull Graphics2D g2d) {
-        // TODO: score delle bandiere
+        g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Enemy flags remaining: " + pacman.getFlags().getEnemyFlags().size(), 5, SCREEN_SIZE + 16);
     }
 
     class TAdapter extends KeyAdapter {

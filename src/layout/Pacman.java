@@ -2,18 +2,13 @@ package layout;
 
 import connection.ConnectionManager;
 import connection.Coordinates;
-
 import javax.swing.*;
 import java.awt.*;
-
 import static constants.GameConstants.*;
 
 public class Pacman {
     private final boolean isPlayerOne;
-
-    private EnemyFlags enemyFlags;
-    private final Flag enemyFlag;
-    private boolean isEnemyFlagTaken;
+    private final Flags flags;
 
     private int pacAnimCount = PAC_ANIM_DELAY;
     private int pacAnimDir = 1;
@@ -25,6 +20,7 @@ public class Pacman {
 
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;
     private int req_dx, req_dy, view_dx, view_dy;
+    private int tempPos;
     
     private final ConnectionManager connectionManager;
 
@@ -32,9 +28,7 @@ public class Pacman {
         this.connectionManager = connectionManager;
 
         this.isPlayerOne = isPlayerOne;
-        enemyFlag = isPlayerOne ? new Flag(208, false) : new Flag(16, false);
-        enemyFlags = new EnemyFlags(isPlayerOne);
-        isEnemyFlagTaken = false;
+        flags = new Flags(isPlayerOne);
 
         playerColor = isPlayerOne ? 'Y' : 'R';
         loadImages();
@@ -63,36 +57,29 @@ public class Pacman {
         pacman3right = new ImageIcon("images/right2" + playerColor + ".png").getImage();
     }
 
-    public void movePacman(Graphics2D g2d, short[] screenData) {
+    public void movePacman(short[] screenData) {
         if (req_dx == -pacmand_x && req_dy == -pacmand_y) {
             copyValues();
         }
 
         if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0) {
             int pos = pacman_x / BLOCK_SIZE + N_BLOCKS * (pacman_y / BLOCK_SIZE);
+            tempPos = pos;
             short ch = screenData[pos];
 
             if ((ch & 16) != 0) {
-                if (pos == enemyFlag.getPosition()) {
-                    this.isEnemyFlagTaken = true;
-                    screenData[pos] = (short) (ch & 15);
-                    // TODO: SEND AHAH TI HO PRESO LA BANDIERA
-                } else {
-                    if (this.isEnemyFlagTaken) {
-                        drawScoreString(g2d);
-                        this.isEnemyFlagTaken = false;
-                        screenData[enemyFlag.getPosition()] += 16;
+                for (Flag flag : flags.getEnemyFlags()) {
+                    if (pos == flag.getPosition()) {
+                        screenData[pos] = (short) (ch & 15);
+                        flags.getEnemyFlags().remove(flag);
+                        break;
                     }
-                    // TODO: SEND AHAH HO SEGNATO UN PUNTO
                 }
             }
 
             if (req_dx != 0 || req_dy != 0) {
                 if (!isaCorrectPosition(ch, req_dx, req_dy)) {
-                    pacmand_x = req_dx;
-                    pacmand_y = req_dy;
-                    view_dx = pacmand_x;
-                    view_dy = pacmand_y;
+                    copyValues();
                 }
             }
 
@@ -138,19 +125,19 @@ public class Pacman {
     public void drawPacman(Graphics2D g2d, JPanel map) {
         if (view_dx == -1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_LEFT)));
+                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_LEFT)));
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_RIGHT)));
+                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_RIGHT)));
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_UP)));
+                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_UP)));
             drawPacmanUp(g2d, map);
         } else {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, getImageFileName(MOVING_DOWN)));
+                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_DOWN)));
             drawPacmanDown(g2d, map);
         }
     }
@@ -254,14 +241,7 @@ public class Pacman {
         return action;
     }
 
-    private void drawScoreString(Graphics2D g2d) {
-        g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
-        g2d.setColor(Color.WHITE);
-        String onevone = "Enemy flag has been rescued!";
-        g2d.drawString(onevone, 5, SCREEN_SIZE + 16);
-    }
-
-    public boolean getIsPlayerOne() { return this.isPlayerOne; }
+    public Flags getFlags() { return this.flags; }
     public void setReq_dx(int req_dx) { this.req_dx = req_dx; }
     public void setReq_dy(int req_dy) { this.req_dy = req_dy; }
 }
