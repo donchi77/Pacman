@@ -2,16 +2,16 @@ package layout;
 
 import connection.ConnectionManager;
 import connection.Coordinates;
-import connection.Sender;
-//import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+
 import static constants.GameConstants.*;
 
 public class Pacman {
     private final boolean isPlayerOne;
 
+    private EnemyFlags enemyFlags;
     private final Flag enemyFlag;
     private boolean isEnemyFlagTaken;
 
@@ -33,6 +33,7 @@ public class Pacman {
 
         this.isPlayerOne = isPlayerOne;
         enemyFlag = isPlayerOne ? new Flag(208, false) : new Flag(16, false);
+        enemyFlags = new EnemyFlags(isPlayerOne);
         isEnemyFlagTaken = false;
 
         playerColor = isPlayerOne ? 'Y' : 'R';
