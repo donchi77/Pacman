@@ -20,7 +20,8 @@ public class Map extends JPanel implements ActionListener {
 
     private Dimension dimension;
     private boolean inGame = false;
-    private boolean isDying = false;
+    private boolean ending;
+    private boolean starting;
 
     private Image flagY;
     private Image flagR;
@@ -49,11 +50,13 @@ public class Map extends JPanel implements ActionListener {
 
     private void initVariables() {
         pacman = new Pacman(isPlayerOne, connectionManager);
-        enemyPacman = new EnemyPacman(connectionManager,this);
+        enemyPacman = new EnemyPacman(connectionManager);
         isEnemyInitialized = false;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
         isStarted = false;
+        ending = false;
+        starting = true;
 
         timer = new Timer(40, this);
         timer.start();
@@ -72,33 +75,36 @@ public class Map extends JPanel implements ActionListener {
         initGame();
     }
 
-    private void playGame(Graphics2D g2d) throws IOException {
-        if (isDying) {
-            death();
-        } else {
-            pacman.movePacman(screenData);
-            pacman.drawPacman(g2d, this);
-            enemyPacman.drawEnemy(g2d, this, pacman.getFlags(), screenData);
+    private void playGame(Graphics2D g2d) {
+        pacman.movePacman(screenData);
+        pacman.drawPacman(g2d, this);
+
+        boolean isWinnerChickenDinner = enemyPacman.drawEnemy(g2d, this, pacman.getFlags(), screenData);
+        if (isWinnerChickenDinner) {
+            try {
+                endGame(g2d, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void showIntroScreen(@NotNull Graphics2D g2d) {
+        drawGameString(g2d, "PRESS S TO START");
+    }
+
+    private void drawGameString(@NotNull Graphics2D g2d, String stringToShow) {
         g2d.setColor(new Color(0, 32, 48));
         g2d.fillRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
         g2d.setColor(Color.white);
         g2d.drawRect(50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
 
-        String start = "PRESS S TO START";
         Font small = new Font("Helvetica", Font.BOLD, 14);
         FontMetrics metr = this.getFontMetrics(small);
 
         g2d.setColor(Color.white);
         g2d.setFont(small);
-        g2d.drawString(start, (SCREEN_SIZE - metr.stringWidth(start)) / 2, SCREEN_SIZE / 2);
-    }
-
-    private void death() {
-
+        g2d.drawString(stringToShow, (SCREEN_SIZE - metr.stringWidth(stringToShow)) / 2, SCREEN_SIZE / 2);
     }
 
     private void drawMaze(Graphics2D g2d) {
@@ -165,16 +171,17 @@ public class Map extends JPanel implements ActionListener {
 
     private void continueLevel() {
         pacman.setAttributes();
-        isDying = false;
     }
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        try {
-            doDrawing(g);
-        } catch (IOException ex) {
-            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        if (!ending) {
+            super.paintComponent(g);
+            try {
+                doDrawing(g);
+            } catch (IOException ex) {
+                Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -194,7 +201,7 @@ public class Map extends JPanel implements ActionListener {
 
         if (inGame) {
             playGame(g2d);
-        } else {
+        } else if (starting) {
             showIntroScreen(g2d);
         }
 
@@ -206,10 +213,24 @@ public class Map extends JPanel implements ActionListener {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.setColor(Color.WHITE);
         g2d.drawString("Enemy flags remaining: " + pacman.getFlags().getEnemyFlags().size(), 5, SCREEN_SIZE + 16);
-        int enemyFlags = pacman.getFlags().getEnemyFlags().size();
-        
-        if(enemyFlags == 0)
-            isEnded(true);
+
+        if (pacman.getFlags().getEnemyFlags().size() == 0) endGame(g2d, true);
+    }
+
+    public void endGame(Graphics2D g2d, boolean isEnded) throws IOException{
+        connectionManager.closeConnection();
+
+        starting = false;
+        ending = true;
+        inGame = false;
+
+        if (isEnded) {
+            System.out.println("You Win!!");
+            drawGameString(g2d, "YOU WIN - PRESS T TO EXIT");
+        } else {
+            System.out.println("You Lost!!");
+            drawGameString(g2d, "YOU LOST - PRESS T TO EXIT");
+        }
     }
 
     class TAdapter extends KeyAdapter {
@@ -239,6 +260,9 @@ public class Map extends JPanel implements ActionListener {
                         timer.start();
                     }
                 }
+            } else if (ending) {
+                if (key == 't' || key == 'T')
+                    System.exit(0);
             } else {
                 if (key == 's' || key == 'S') {
                     try {
@@ -268,16 +292,5 @@ public class Map extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();
-    }
-    
-    public void isEnded(boolean isEnded) throws IOException{
-        connectionManager.closeConnection();
-        
-        if(isEnded)
-            System.out.println("Hai vinto!!");
-        else
-            System.out.println("Hai perso!!");
-        
-        System.exit(0);
     }
 }

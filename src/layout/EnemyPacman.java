@@ -8,12 +8,9 @@ import java.io.IOException;
 
 public class EnemyPacman implements Runnable {
     private final ConnectionManager connectionManager;
-    private final Map maP; 
     
-    public EnemyPacman(ConnectionManager connectionManager, Map map) {
+    public EnemyPacman(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
-        this.maP = map;
-        
         new Thread(this).start();
     }
 
@@ -27,12 +24,12 @@ public class EnemyPacman implements Runnable {
         }*/
     }
 
-    synchronized public void drawEnemy(Graphics2D g2d, JPanel map, Flags flags, short[] screenData) throws IOException{
+    synchronized public boolean drawEnemy(Graphics2D g2d, JPanel panel, Flags flags, short[] screenData) {
         Packet packet = connectionManager.readCoordinates();
         System.out.println("x : " + packet.getX() + " - y : " + packet.getY() +
                 " - file : " + packet.getImageFile() + " - pos : " + packet.getPos());
         g2d.drawImage(new ImageIcon("images/" + packet.getImageFile() + ".png").getImage(),
-                packet.getX(), packet.getY(), map);
+                packet.getX(), packet.getY(), panel);
 
         int pos = packet.getPos();
         short ch = screenData[pos];
@@ -49,10 +46,6 @@ public class EnemyPacman implements Runnable {
                 screenData[pos] = (short) (ch & 15);
         }
         
-        boolean isEnded = packet.getisEnded();
-        
-        
-        if(isEnded)
-            maP.isEnded(false);
+        return packet.getisEnded();
     }
 }

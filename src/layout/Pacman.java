@@ -124,12 +124,7 @@ public class Pacman {
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
         int enemyFlags = getFlags().getEnemyFlags().size();
-        boolean isEnded = false;
-        
-        if(enemyFlags != 0)
-            isEnded = false;
-        else 
-            isEnded = true;
+        boolean isEnded = enemyFlags == 0;
         
         if (view_dx == -1) {
             connectionManager.writeCoordinates(
