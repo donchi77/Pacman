@@ -1,7 +1,7 @@
 package layout;
 
 import connection.ConnectionManager;
-import connection.Coordinates;
+import connection.Packet;
 import javax.swing.*;
 import java.awt.*;
 import static constants.GameConstants.*;
@@ -123,21 +123,29 @@ public class Pacman {
     }
 
     public void drawPacman(Graphics2D g2d, JPanel map) {
+        int enemyFlags = getFlags().getEnemyFlags().size();
+        boolean isEnded = false;
+        
+        if(enemyFlags != 0)
+            isEnded = false;
+        else 
+            isEnded = true;
+        
         if (view_dx == -1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_LEFT)));
+                    new Packet(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_LEFT), isEnded));
             drawPacmanLeft(g2d, map);
         } else if (view_dx == 1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_RIGHT)));
+                    new Packet(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_RIGHT), isEnded));
             drawPacmanRight(g2d, map);
         } else if (view_dy == -1) {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_UP)));
+                    new Packet(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_UP), isEnded));
             drawPacmanUp(g2d, map);
         } else {
             connectionManager.writeCoordinates(
-                    new Coordinates(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_DOWN)));
+                    new Packet(pacman_x + 1, pacman_y + 1, tempPos, getImageFileName(MOVING_DOWN), isEnded));
             drawPacmanDown(g2d, map);
         }
     }

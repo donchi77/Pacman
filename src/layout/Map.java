@@ -49,7 +49,7 @@ public class Map extends JPanel implements ActionListener {
 
     private void initVariables() {
         pacman = new Pacman(isPlayerOne, connectionManager);
-        enemyPacman = new EnemyPacman(connectionManager);
+        enemyPacman = new EnemyPacman(connectionManager,this);
         isEnemyInitialized = false;
         screenData = new short[N_BLOCKS * N_BLOCKS];
         dimension = new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -72,7 +72,7 @@ public class Map extends JPanel implements ActionListener {
         initGame();
     }
 
-    private void playGame(Graphics2D g2d) {
+    private void playGame(Graphics2D g2d) throws IOException {
         if (isDying) {
             death();
         } else {
@@ -171,10 +171,14 @@ public class Map extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        doDrawing(g);
+        try {
+            doDrawing(g);
+        } catch (IOException ex) {
+            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void doDrawing(Graphics g) {
+    private void doDrawing(Graphics g) throws IOException {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, dimension.width, dimension.height);
@@ -198,10 +202,14 @@ public class Map extends JPanel implements ActionListener {
         g2d.dispose();
     }
 
-    private void showScore(@NotNull Graphics2D g2d) {
+    private void showScore(@NotNull Graphics2D g2d) throws IOException {
         g2d.setFont(new Font("Helvetica", Font.BOLD, 14));
         g2d.setColor(Color.WHITE);
         g2d.drawString("Enemy flags remaining: " + pacman.getFlags().getEnemyFlags().size(), 5, SCREEN_SIZE + 16);
+        int enemyFlags = pacman.getFlags().getEnemyFlags().size();
+        
+        if(enemyFlags == 0)
+            isEnded(true);
     }
 
     class TAdapter extends KeyAdapter {
@@ -260,5 +268,16 @@ public class Map extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();
+    }
+    
+    public void isEnded(boolean isEnded) throws IOException{
+        connectionManager.closeConnection();
+        
+        if(isEnded)
+            System.out.println("Hai vinto!!");
+        else
+            System.out.println("Hai perso!!");
+        
+        System.exit(0);
     }
 }
