@@ -48,26 +48,29 @@ public class ConnectionManager {
             System.exit(1);
         }
     }
-    
-    public void writeCoordinates(Coordinates coordinates) {
+
+    //Invio pacchetto
+    public void writeCoordinates(Packet packet) {
         try {
-            objectOutputStream.writeObject(coordinates);
+            objectOutputStream.writeObject(packet);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
-    public Coordinates readCoordinates() {
+
+    //Lettura pacchetto
+    public Packet readCoordinates() {
         //read coordinates
         try {
-            return (Coordinates) objectInputStream.readObject();
+            return (Packet) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         return null;
     }
-    
+
+    //Lettura player 1 o 2
     public boolean readPlayer() throws IOException, ClassNotFoundException {
         //Legge se è il giocatore 1 o 2
         int p = (int) objectInputStream.readObject();
@@ -77,7 +80,6 @@ public class ConnectionManager {
     }
     
     public void playersConnected(boolean isPlayerOne) throws IOException, ClassNotFoundException{
-        
         //ulteriore controllo per il gicatore 1
         if(isPlayerOne){
             System.out.println("In attesa di un'altro giocatore...");
@@ -89,8 +91,12 @@ public class ConnectionManager {
         }
         else{
             System.out.println("Il giocatore 1 è gia collegato");
+
+            //Variabile per sincronizzare il player 2
             int gamestart = (int) objectInputStream.readObject();
         }
     }
+    
+    public void closeConnection() throws IOException{ this.socket.close(); }
 }
 

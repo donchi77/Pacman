@@ -1,7 +1,5 @@
 package connection;
 
-import connection.User;
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,9 +33,11 @@ public class Server {
     ArrayList<User> users = new ArrayList<>();
     
     //Inizializzazione dell'oggetto coordinates
-    Coordinates[] coordinates;
-    
+    Packet[] coordinates;
+
+    //controlla che i due giocatori siano collegati e non permette che altri se ne aggiungano
     boolean check = true;
+    boolean isEnded = true;
     
     public static void main (String[] args) { 
         //Server start
@@ -51,7 +51,7 @@ public class Server {
             serverSocket = new ServerSocket(8080); 
             System.out.println("ServerSocket awaiting connections...");
 
-            while(true){
+            while(isEnded){
                 if(check == true){
                     for(int i = 0; i< 2; i++){
                         //accept connection
@@ -77,27 +77,39 @@ public class Server {
             System.exit(1);
         }
     } 
-    
-    public void send(Coordinates coordinates, int p) {
+
+    //Inoltro del pacchetto
+    public void send(Packet packet, int p) {
         //salva il numero del giocatore
         int player = p+1;
-        System.out.println("Ricezione dal giocatore " + player + " : x -" + coordinates.getX() + " e y - " + coordinates.getY());
-        System.out.println("Nome Immagine : " + coordinates.getImageFile());
+        System.out.println("Ricezione dal giocatore " + player + " : x -" + packet.getX() + " e y - " + packet.getY());
+        System.out.println("Nome Immagine : " + packet.getImageFile());
+
+        boolean isEnded = packet.getisEnded();
+        if(isEnded){
+            System.out.println("Il giocatore " + player + " ha vinto!");
+        }
         
         //inizializzazione dell'oggetto user
         User u;
         
         try {
-            //seetting in base a quale socket ha scritto, dell'oggeto user contenente la socket su cui andare a scrivere
+            //setting in base a quale socket ha scritto, dell'oggeto user contenente la socket su cui andare a scrivere
             if(p == 0)
                 u = users.get(1);
             else
                 u = users.get(0);
             
             //invio delle coordinate all'atra socket
-            u.send(coordinates);
+            u.send(packet);
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void end(){
+        System.out.println("Partita conlcusa");
+        
+        System.exit(0);
     }
 }

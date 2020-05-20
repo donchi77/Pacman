@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author farin
  */
 public class User implements Runnable{
-    
+    //Socket
     Socket socket;
     Server server;
     
@@ -27,8 +27,10 @@ public class User implements Runnable{
     
     //variabile che indica il giocatore
     int player;
+
     //variabile utlizzata per il continuo invio e ricezione delle coordinate
     boolean check = true;
+
     //variabili che indicano al giocatore 1 l'inizio della partita
     boolean gameStart = false;
     boolean gameStart2 = false;
@@ -63,53 +65,58 @@ public class User implements Runnable{
     @Override
     public void run() {
          try {
-             
-            //controllo aggiuntivo per il giocatore 1
-            if (player == 0){
+            if(player == 0){
                 int k = 10;
-                System.out.println("pog");
+                System.out.println("\n");
                 //ciclo inifinito fino a quando il giocatore 2 non si connette
-                while(gameStart == false) { 
-                    System.out.println("monkas");
+                while(gameStart == false) {
+                    System.out.println("\n");
                     if(gameStart == true){
                         objectOutputStream.writeObject(k);
-                        System.out.println("kekw");
+                        System.out.println("\n");
                         gameStart2 = true;
                     }
-                    System.out.println("azz");
+                    System.out.println("\n");
                 }
                 if(gameStart2 == false){
                     objectOutputStream.writeObject(k);
                 }
             }
             else{
+                //invio di una variabile al giocatore 2 per sincronizzare
                 int k = 10;
                 objectOutputStream.writeObject(k);
             }
+
             //inizializzazione dell'ggetto coordinates
-            Coordinates coordinates;
+            Packet packet;
             
             //ciclo infinito per l'invio delle coordinate da un client all'altro
             while(check){
-                  coordinates = (Coordinates) objectInputStream.readObject();
-                  server.send(coordinates,player);
+                  packet = (Packet) objectInputStream.readObject();
+                  server.send(packet,player);
             }
             
             socket.close();
         } catch(IOException e){
-            //System.out.println(e);
+            server.end();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void send (Coordinates coordinates) throws IOException{
-        objectOutputStream.writeObject(coordinates);
+
+    //Invio pacchetto
+    public void send (Packet packet) throws IOException{
+        objectOutputStream.writeObject(packet);
     }
 
     //funzione utilizzata per settare una variabile booleana che verrà utilizzata per informare il giocatore 1 dell'inizio della partita
     public void setGameStart(boolean gameStart) {
         this.gameStart = gameStart;
+    }
+    
+    public void closeConnection() throws IOException {
+        this.socket.close();
     }
     
 }
