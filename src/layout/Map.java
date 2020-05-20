@@ -32,6 +32,9 @@ public class Map extends JPanel implements ActionListener {
     ConnectionManager connectionManager;
     boolean isPlayerOne;
     boolean isStarted;
+    
+    boolean endGame = false;
+    boolean lose = false;
 
     public Map(boolean isPlayerOne, ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
@@ -195,9 +198,13 @@ public class Map extends JPanel implements ActionListener {
         if (inGame) {
             playGame(g2d);
         } else {
-            showIntroScreen(g2d);
+            if(!endGame)
+                showIntroScreen(g2d);
+            if(lose){
+                showLoseScreen(g2d);
+            }
         }
-
+        
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
@@ -209,7 +216,7 @@ public class Map extends JPanel implements ActionListener {
         int enemyFlags = pacman.getFlags().getEnemyFlags().size();
         
         if(enemyFlags == 0)
-            isEnded(true);
+            isEnded(true, g2d);
     }
 
     class TAdapter extends KeyAdapter {
@@ -250,6 +257,15 @@ public class Map extends JPanel implements ActionListener {
                     inGame = true;
                     initGame();
                 }
+                
+                if(key == 'a' || key == 'A'){
+                    try {
+                        connectionManager.closeConnection();
+                        System.exit(0);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         }
 
@@ -270,14 +286,32 @@ public class Map extends JPanel implements ActionListener {
         repaint();
     }
     
-    public void isEnded(boolean isEnded) throws IOException{
-        connectionManager.closeConnection();
+    public void isEnded(boolean isEnded, Graphics2D g2d) throws IOException{
+        inGame = false;
+        endGame = true;
         
-        if(isEnded)
-            System.out.println("Hai vinto!!");
-        else
-            System.out.println("Hai perso!!");
+        String end = "";
         
-        System.exit(0);
+        if(isEnded) {
+            end = "Hai vinto!\n PRESS A TO END";
+            Font small = new Font("Helvetica", Font.BOLD, 14);
+            FontMetrics metr = this.getFontMetrics(small);
+
+            g2d.setColor(Color.white);
+            g2d.setFont(small);
+            g2d.drawString(end, (SCREEN_SIZE - metr.stringWidth(end)) / 2, SCREEN_SIZE / 2);
+        } else {
+            this.lose = true;
+        }
+    }
+    
+    private void showLoseScreen(Graphics2D g2d) {
+        String end = "Hai vinto!\n PRESS A TO END";
+        Font small = new Font("Helvetica", Font.BOLD, 14);
+        FontMetrics metr = this.getFontMetrics(small);
+
+        g2d.setColor(Color.white);
+        g2d.setFont(small);
+        g2d.drawString(end, (SCREEN_SIZE - metr.stringWidth(end)) / 2, SCREEN_SIZE / 2);
     }
 }
